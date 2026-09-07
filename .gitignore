@@ -1,0 +1,64 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependencies
+node_modules
+
+# Build / output
+dist
+dist-ssr
+coverage
+*.tsbuildinfo
+
+# Env / local secrets
+*.local
+.env
+.env.*
+!.env.example
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.ntvs*
+*.njsproj
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
+
+# .NET
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Ll]og/
+[Ll]ogs/
+*.userprefs
+*.pidb
+*.svclog
+*.pdb
+*.mdb
+*.cache
+project.lock.json
+project.fragment.lock.json
+artifacts/
+TestResults/
+*.nupkg
+*.snupkg
+nuget-packages/
+.nuget/
+*.nuget.props
+*.nuget.targets
+.vs/
+*.DotSettings.user

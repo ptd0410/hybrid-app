@@ -1,8 +1,8 @@
-import { handleDragStart } from "@/applications";
 import { cn } from "@/lib";
 import { Slot } from "@radix-ui/react-slot";
 import type { ComponentProps, PointerEvent, PropsWithChildren } from "react";
 import { useClickHold } from "./useClickHold";
+import { drag } from "@/applications";
 
 export type DragableProps = PropsWithChildren &
   Omit<ComponentProps<typeof Slot>, "onClick"> & {
@@ -24,7 +24,7 @@ export function Dragable({
 }: DragableProps) {
   const behavior = useClickHold({
     onHold: (e, currentTarget) => {
-      handleDragStart(e, children, currentTarget, itemId);
+      drag.start(e, children, currentTarget, itemId);
     },
     onClick,
   });

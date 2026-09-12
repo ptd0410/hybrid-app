@@ -9,8 +9,9 @@ type StoreApiLike = {
   ) => () => void;
 };
 
-export type StoreKeyOptions = {
+export type StoreKeyOptions<State, Selected = State> = {
   required?: boolean;
+  selector?: (state: State) => Selected;
 };
 
 export function useStoreKeys<
@@ -19,16 +20,36 @@ export function useStoreKeys<
 >(
   store: UseBoundStore<TApi>,
   keys: K[],
-  options: StoreKeyOptions = {},
-): Pick<ExtractState<TApi>, K> {
-  const { required } = options;
+  options?: { required?: boolean },
+): Pick<ExtractState<TApi>, K>;
+
+export function useStoreKeys<
+  TApi extends StoreApiLike,
+  TSelected,
+  K extends keyof TSelected,
+>(
+  store: UseBoundStore<TApi>,
+  keys: K[],
+  options: {
+    required?: boolean;
+    selector: (state: ExtractState<TApi>) => TSelected;
+  },
+): Pick<TSelected, K>;
+
+export function useStoreKeys(
+  store: UseBoundStore<StoreApiLike>,
+  keys: PropertyKey[],
+  options: StoreKeyOptions<object> = {},
+) {
+  const { required, selector } = options;
 
   return store(
     useShallow((state) => {
-      const result = {} as Pick<ExtractState<TApi>, K>;
+      const source = selector ? selector(state) : state;
+      const result: Record<PropertyKey, unknown> = {};
 
       for (const key of keys) {
-        const value = state[key];
+        const value = source?.[key as keyof typeof source];
         if (value === undefined && required) {
           throw new Error(`${String(key)} is required`);
         }

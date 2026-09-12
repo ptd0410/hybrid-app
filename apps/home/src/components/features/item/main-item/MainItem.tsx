@@ -1,33 +1,32 @@
-import { useItemMetadata, useLayout } from "@/hooks";
-import { DApp } from "./DApp";
+import { useItem, useItemStatus, usePickLayoutStore } from "@/hooks";
+import { App } from "./App";
 import { Frame } from "./Frame";
 import { Group } from "./Group";
-import { useItemStatus } from "@/applications";
 import { cn } from "@/lib";
-import { useDragStore } from "@/logic";
+import { useDragStore } from "@/modules/drag";
 
 export type MainItemProps = {
   itemId: string;
 };
 
 const comps = {
-  app: DApp,
+  app: App,
   frame: Frame,
   group: Group,
 };
 
 export function MainItem({ itemId }: MainItemProps) {
-  const metadata = useItemMetadata(itemId);
+  const item = useItem(itemId);
   const { selfDrag, isCut, isSelected } = useItemStatus(itemId);
   const dest = useDragStore((s) => s.current?.transformMap?.[itemId]);
-  const { cell } = useLayout();
+  const { main } = usePickLayoutStore();
 
-  if (!metadata) return null;
-  const Comp = comps[metadata.type as keyof typeof comps];
+  if (!item) return null;
+  const Comp = comps[item.type as keyof typeof comps];
   if (!Comp) return null;
 
-  const tx = dest ? (dest.x - metadata.x) * cell.width : 0;
-  const ty = dest ? (dest.y - metadata.y) * cell.height : 0;
+  const tx = dest ? (dest.x - item.x) * main.size.width : 0;
+  const ty = dest ? (dest.y - item.y) * main.size.height : 0;
 
   return (
     <div
@@ -38,10 +37,10 @@ export function MainItem({ itemId }: MainItemProps) {
         isSelected && "border border-white/50",
       )}
       style={{
-        gridColumnStart: metadata.x + 1,
-        gridRowStart: metadata.y + 1,
-        gridColumnEnd: `span ${metadata.width}`,
-        gridRowEnd: `span ${metadata.height}`,
+        gridColumnStart: item.x + 1,
+        gridRowStart: item.y + 1,
+        gridColumnEnd: `span ${item.col}`,
+        gridRowEnd: `span ${item.row}`,
         transform: dest ? `translate(${tx}px, ${ty}px)` : undefined,
         zIndex: dest ? 1 : undefined,
       }}

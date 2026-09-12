@@ -1,7 +1,15 @@
 import type { ReactNode } from "react";
 import type { Item, ItemLocation } from "../item";
 import type { DockLayout, GroupLayout, MainLayout } from "../layout";
-import type { Bound, ClientPoint, Point, Position } from "@/types";
+import type {
+  Bound,
+  ClientPoint,
+  Point,
+  Position,
+  WithIconSize,
+} from "@/types";
+
+export type TransformMap = Record<string, Point>;
 
 export type DragDirection = "up" | "down" | "left" | "right";
 
@@ -16,14 +24,20 @@ export type DockBound = Bound & {
   width: number;
 };
 
-export type DockLayoutSnapshot = DockLayout & {
-  boundIn: DockBound;
-  boundOut: DockBound;
+export type DockIconSnapshot = {
+  rollback: number;
+  target: number;
 };
 
+export type DockLayoutSnapshot = DockLayout &
+  WithIconSize & {
+    boundIn: DockBound;
+    boundOut: DockBound;
+  };
+
 export type LayoutSnapshot = {
-  main: MainLayout;
-  group: GroupLayout;
+  main: MainLayout & WithIconSize;
+  group: GroupLayout & WithIconSize;
   dock: DockLayoutSnapshot;
 };
 
@@ -44,6 +58,7 @@ export type DragSnapshot = {
   layout: LayoutSnapshot;
   position: PositionSnapshot;
   occupied: OccupedSnapshot;
+  iconSize: number;
 };
 
 export type DragCurrent = {
@@ -52,4 +67,6 @@ export type DragCurrent = {
   intervalId?: number;
   dockBound: DockBound;
   direction?: DragDirection;
+  groupWith?: string;
+  transformMap?: TransformMap;
 };

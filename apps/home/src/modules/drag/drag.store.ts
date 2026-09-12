@@ -7,10 +7,12 @@ export type DragStore = {
   snapshot?: DragSnapshot;
   current?: DragCurrent;
   phase: DragPhase;
+  raf?: number;
   initEle: (ele: HTMLDivElement | null) => void;
   start: (input: DragSnapshot) => void;
   move: (input: DragCurrent) => void;
   clear: () => void;
+  setRaf: (raf: number | undefined) => void;
 };
 
 export const useDragStore = create<DragStore>()(
@@ -22,6 +24,7 @@ export const useDragStore = create<DragStore>()(
     move: (current) => set({ current }),
     clear: () =>
       set({ phase: "idle", snapshot: undefined, current: undefined }),
+    setRaf: (raf) => set({ raf }),
   })),
 );
 

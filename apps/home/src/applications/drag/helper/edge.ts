@@ -1,5 +1,5 @@
 import { clamp } from "@/lib";
-import type { DragCurrent, Target } from "@/modules/drag";
+import { getDragStore, type DragCurrent, type Target } from "@/modules/drag";
 import { getPageStore } from "@/modules/page";
 
 export function handlePageOnEdge(
@@ -37,4 +37,11 @@ export function handlePageOnEdge(
   }
 
   return intervalId;
+}
+
+export function clearEdgeInterval() {
+  const { current } = getDragStore();
+  if (current?.intervalId) {
+    clearInterval(current.intervalId);
+  }
 }

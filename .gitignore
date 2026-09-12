@@ -38,6 +38,19 @@ coverage
 .DS_Store
 Thumbs.db
 
+# Archives
+*.zip
+
+# Databases
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.sqlite-shm
+*.sqlite-wal
+.wrangler/
+
 # .NET
 [Bb]in/
 [Oo]bj/

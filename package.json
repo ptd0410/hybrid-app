@@ -1,15 +1,26 @@
 {
-  "name": "my-project",
+  "name": "launcher",
   "private": true,
   "scripts": {
     "dev": "pnpm run dev:web",
+    "dev:app": "pnpm --filter desktop dev",
+    "dev:bridge": "pnpm --filter bridge dev",
     "dev:web": "pnpm --filter web dev",
-    "dev:api": "dotnet run --project dotnet/MyProject.Api",
-    "build": "pnpm run build:web && pnpm run build:api",
+    "build": "pnpm run build:web && pnpm run build:app",
     "build:web": "pnpm --filter web build",
-    "build:api": "dotnet build dotnet/MyProject.sln",
-    "test": "pnpm run test:web && pnpm run test:api",
-    "test:web": "pnpm --filter web test",
-    "test:api": "dotnet test dotnet/MyProject.sln"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "pnpm run test:web && pnpm run test:app",
+    "test:web": "pnpm --filter web test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.9.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.4",
+    "globals": "^17.11.0",
+    "tsup": "^8.5.1",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.67.0"
   }
 }

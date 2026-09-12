@@ -1,0 +1,31 @@
+{
+  "name": "desktop",
+  "private": true,
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "pnpm build && electron .",
+    "build": "pnpm build:main && pnpm build:preload",
+    "build:main": "esbuild src/main.ts --bundle --platform=node --format=esm --external:electron --external:better-sqlite3 --outfile=dist/main.js",
+    "build:preload": "esbuild src/preload.ts --bundle --platform=browser --format=cjs --external:electron --outfile=dist/preload.cjs",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "rebuild:db": "electron-rebuild -f -w better-sqlite3"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^4.2.0",
+    "@types/adm-zip": "^0.5.8",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^24.13.3",
+    "drizzle-kit": "^0.31.10",
+    "electron": "^38.1.0",
+    "esbuild": "^0.28.2",
+    "tsx": "latest",
+    "typescript": "latest"
+  },
+  "dependencies": {
+    "adm-zip": "^0.6.0",
+    "better-sqlite3": "^13.0.3",
+    "drizzle-orm": "^0.45.2"
+  }
+}

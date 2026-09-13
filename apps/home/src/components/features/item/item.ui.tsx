@@ -89,3 +89,29 @@ export function ItemName({
     </p>
   );
 }
+
+export function DockIcon({
+  children,
+  className,
+  style,
+  ref,
+  ...props
+}: ComponentProps<"div">) {
+  const { dock } = usePickLayoutStore("dock");
+  const { iconSize } = dock;
+
+  return (
+    <div
+      ref={ref}
+      className={cn("rounded-2xl size-10", className)}
+      style={{
+        width: iconSize,
+        height: iconSize,
+        ...style,
+      }}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+}

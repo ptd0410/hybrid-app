@@ -22,9 +22,9 @@ export function dragStart(
 ) {
   const { snapshot, start } = getDragStore();
   const { items } = getItemStore();
-  const { main, dock, group } = getLayoutStore();
+  const { main, dock, group, iconSize } = getLayoutStore();
   const { dockIds, mainIds } = getGridStore();
-  const { groupId } = getGroupStore();
+  const { snapshot: groupSnapshot } = getGroupStore();
   const { children } = getRelationStore();
 
   const item = items[itemId];
@@ -36,6 +36,8 @@ export function dragStart(
   window.addEventListener("pointermove", dragMove, { capture: true });
   window.addEventListener("pointerup", dragEnd, { capture: true });
   window.addEventListener("pointercancel", dragEnd, { capture: true });
+
+  const { groupId = "" } = groupSnapshot ?? {};
 
   const bound = originEle.getBoundingClientRect();
   const dockSnapshot = computeDockLayoutSnapshot(dock, dockIds, item.location);
@@ -55,7 +57,8 @@ export function dragStart(
       dock: computeOccupiedMap(dockIds, items, itemId),
       group: computeOccupiedMap(childIds, items, itemId),
     },
+    iconSize,
   };
-
+  updateElementPosition(ele, bound.left, bound.top);
   start(_snapshot);
 }

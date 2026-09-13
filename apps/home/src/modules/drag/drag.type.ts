@@ -36,8 +36,8 @@ export type DockLayoutSnapshot = DockLayout &
   };
 
 export type LayoutSnapshot = {
-  main: MainLayout & WithIconSize;
-  group: GroupLayout & WithIconSize;
+  main: MainLayout;
+  group: GroupLayout;
   dock: DockLayoutSnapshot;
 };
 

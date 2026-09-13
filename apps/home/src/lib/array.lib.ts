@@ -7,3 +7,7 @@ export function chunk<T>(array: T[], size: number): T[][] {
 
   return result;
 }
+
+export const is2DArray = (value: unknown): value is unknown[][] => {
+  return Array.isArray(value) && value.every(Array.isArray);
+};

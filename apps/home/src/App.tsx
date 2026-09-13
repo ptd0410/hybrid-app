@@ -1,4 +1,4 @@
-import { Body, Dock, Pagination, Statusbar } from "./components";
+import { Body, Dock, DragItem, Pagination, Statusbar } from "./components";
 
 function App() {
   return (
@@ -11,6 +11,7 @@ function App() {
           <Dock />
         </div>
       </div>
+      <DragItem />
     </>
   );
 }

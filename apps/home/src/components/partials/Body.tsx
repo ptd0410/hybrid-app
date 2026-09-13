@@ -6,7 +6,7 @@ import {
 } from "@/hooks";
 import { SwiperSlide } from "swiper/react";
 import { SwiperWrapper } from "../custom";
-import { MainContextMenu } from "../features";
+import { MainContextMenu, MainItem } from "../features";
 
 export type BodyProps = {};
 

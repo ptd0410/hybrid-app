@@ -1,13 +1,14 @@
 import { ContextMenuWrapper } from "@/components/custom";
+import type { WithItem } from "@/types";
 import type { PropsWithChildren } from "react";
 
-export type AppContextMenuProps = PropsWithChildren & {
-  itemId: string;
-  isDock?: boolean;
-};
+export type AppContextMenuProps = PropsWithChildren &
+  WithItem & {
+    isDock?: boolean;
+  };
 
 export function AppContextMenu({
-  itemId,
+  item,
   isDock,
   children,
 }: AppContextMenuProps) {

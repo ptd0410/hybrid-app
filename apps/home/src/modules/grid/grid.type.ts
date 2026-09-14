@@ -3,4 +3,5 @@ export type GridIds = {
   dockIds: string[];
   recentAppIds: string[];
   recentWindowIds: string[];
+  childrenIdsMap: Record<string, string[][]>;
 };

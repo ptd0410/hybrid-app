@@ -9,7 +9,7 @@ export type DockAppProps = WithItemId;
 
 export function DockApp({ itemId }: DockAppProps) {
   const item = useItem(itemId);
-  const dest = useDragStore((s) => s.current?.transformMap?.[itemId]);
+  const dest = useDragStore((s) => s.preview?.transformMap?.[itemId]);
   const { dock } = usePickLayoutStore("dock");
   if (!item) return null;
 
@@ -19,7 +19,7 @@ export function DockApp({ itemId }: DockAppProps) {
 
   return (
     <Dragable
-      itemId={itemId}
+      item={item}
       className={cn("transition-transform duration-200 ease-out")}
       style={{
         transform: dest ? `translateX(${tx}px)` : undefined,

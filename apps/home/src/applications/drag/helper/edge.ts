@@ -1,15 +1,13 @@
-import { clamp } from "@/lib";
-import { getDragStore, type DragCurrent, type Target } from "@/modules/drag";
-import { getPageStore } from "@/modules/page";
+import { getDragStore, type DragCurrent } from "@/modules/drag";
+import type { ItemLocation } from "@/modules/item";
+import { changePage } from "@/modules/page";
 
 export function handlePageOnEdge(
   prev: DragCurrent | undefined,
-  currentTarget: Target | undefined,
+  location: ItemLocation,
   isInGroup?: boolean,
 ) {
-  const { location = "null" } = currentTarget ?? {};
-
-  let intervalId = prev?.intervalId;
+  const { setEdgeTimer, edgeTimer } = getDragStore();
 
   const isEdge = isInGroup
     ? ["groupLeft", "groupRight"].includes(location)
@@ -20,28 +18,27 @@ export function handlePageOnEdge(
   );
 
   if (isEdge && !wasEdge) {
-    intervalId = window.setInterval(() => {
-      const { page, total, setPage } = getPageStore();
+    const nextTimer = window.setInterval(() => {
       const isRight = isInGroup
         ? location === "groupRight"
         : location === "mainRight";
 
-      const next = page + (isRight ? 1 : -1);
-      setPage(clamp(next, 0, total));
+      changePage(isRight ? "next" : "prev");
     }, 700);
-  } else if (!isEdge && wasEdge) {
-    if (intervalId !== undefined) {
-      clearInterval(intervalId);
-      intervalId = undefined;
+    setEdgeTimer(nextTimer);
+  }
+
+  if (!isEdge && wasEdge) {
+    if (edgeTimer !== undefined) {
+      clearInterval(edgeTimer);
+      setEdgeTimer(undefined);
     }
   }
-
-  return intervalId;
 }
 
-export function clearEdgeInterval() {
-  const { current } = getDragStore();
-  if (current?.intervalId) {
-    clearInterval(current.intervalId);
-  }
+export function clearEdgeTimer() {
+  const { edgeTimer, setEdgeTimer } = getDragStore();
+  if (edgeTimer === undefined) return;
+  clearInterval(edgeTimer);
+  setEdgeTimer(undefined);
 }

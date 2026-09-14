@@ -5,3 +5,4 @@ export * from "./info.hook";
 export * from "./item.hook";
 export * from "./group.hook";
 export * from "./drag.hook";
+export * from "./keyboard.hook";

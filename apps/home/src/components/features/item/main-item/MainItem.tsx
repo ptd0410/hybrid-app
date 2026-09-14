@@ -1,13 +1,11 @@
-import { useItem, useItemStatus, usePickLayoutStore } from "@/hooks";
+import { useItemStatus, usePickLayoutStore } from "@/hooks";
 import { App } from "./App";
 import { Frame } from "./Frame";
 import { Group } from "./Group";
 import { cn } from "@/lib";
 import { useDragStore } from "@/modules/drag";
-
-export type MainItemProps = {
-  itemId: string;
-};
+import type { WithItem } from "@/types";
+import { memo } from "react";
 
 const comps = {
   app: App,
@@ -15,12 +13,11 @@ const comps = {
   group: Group,
 };
 
-export function MainItem({ itemId }: MainItemProps) {
-  const item = useItem(itemId);
-  const { selfDrag, isCut, isSelected } = useItemStatus(itemId);
-  const dest = useDragStore((s) => s.current?.transformMap?.[itemId]);
+export const MainItem = memo(({ item }: WithItem) => {
+  const { selfDrag, isCut, isSelected } = useItemStatus(item.id);
+  const dest = useDragStore((s) => s.preview?.transformMap?.[item.id]);
   const { main } = usePickLayoutStore();
-
+  console.log("render");
   if (!item) return null;
   const Comp = comps[item.type as keyof typeof comps];
   if (!Comp) return null;
@@ -45,7 +42,7 @@ export function MainItem({ itemId }: MainItemProps) {
         zIndex: dest ? 1 : undefined,
       }}
     >
-      <Comp itemId={itemId} />
+      <Comp item={item} />
     </div>
   );
-}
+});

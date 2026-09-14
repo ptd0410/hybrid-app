@@ -5,7 +5,9 @@ import type { Item } from "./item.type";
 export type ItemStore = {
   items: Record<string, Item>;
   initItems: (input: Item[]) => void;
-  updateItems: (id: string, input: Partial<Item>) => void;
+  setItem: (input: Item) => void;
+  updateItem: (id: string, input: Partial<Item>) => void;
+  removeItem: (id: string) => void;
 };
 
 export const useItemStore = create<ItemStore>()(
@@ -18,7 +20,11 @@ export const useItemStore = create<ItemStore>()(
         });
       });
     },
-    updateItems: (id, input) => {
+    setItem: (item) =>
+      set((s) => {
+        s.items[item.id] = item;
+      }),
+    updateItem: (id, input) => {
       set((s) => {
         const item = s.items[id];
         if (item) {
@@ -26,6 +32,10 @@ export const useItemStore = create<ItemStore>()(
         }
       });
     },
+    removeItem: (id) =>
+      set((s) => {
+        delete s.items[id];
+      }),
   })),
 );
 

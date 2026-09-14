@@ -1,8 +1,9 @@
+import { Image, type ImageProps } from "@/components/ui";
 import { usePickLayoutStore } from "@/hooks";
 import { cn } from "@/lib";
 import { useDragStore } from "@/modules/drag";
-import type { WithClassName, WithItemId } from "@/types";
-import { useState, type ComponentProps, type PropsWithChildren } from "react";
+import type { WithClassName, WithItem } from "@/types";
+import { type ComponentProps, type PropsWithChildren } from "react";
 import { useShallow } from "zustand/shallow";
 
 export function CellWrapper({
@@ -46,10 +47,10 @@ export function MainIcon({
   );
 }
 
-export function GroupPreview({ itemId }: WithItemId) {
+export function GroupPreview({ item }: WithItem) {
   const { isGroupWith } = useDragStore(
     useShallow((s) => ({
-      isGroupWith: s.current?.groupWith === itemId,
+      isGroupWith: s.preview?.groupWith === item.id,
     })),
   );
 
@@ -62,21 +63,8 @@ export function GroupPreview({ itemId }: WithItemId) {
     />
   );
 }
-export function ItemImage(props: { src?: string } & WithClassName) {
-  const [loaded, setLoaded] = useState(false);
-
-  return (
-    <img
-      className={cn(
-        "size-full rounded-[inherit] object-cover",
-        !loaded && "bg-slate-300 animate-pulse",
-        props.className,
-      )}
-      src={props.src || undefined}
-      draggable={false}
-      onLoad={() => setLoaded(true)}
-    />
-  );
+export function ItemImage(props: ImageProps) {
+  return <Image {...props} />;
 }
 
 export function ItemName({

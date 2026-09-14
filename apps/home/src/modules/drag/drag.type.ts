@@ -9,11 +9,27 @@ import type {
   WithIconSize,
 } from "@/types";
 
+export type Snap = Position & WithIconSize;
+
 export type TransformMap = Record<string, Point>;
+
+export type ColliedItem = Point & {
+  itemId: string;
+  page: number;
+};
+
+export type HoverKind = "push" | "group";
+
+export type DragDwell = {
+  itemId: string;
+  origin: ClientPoint;
+  timeoutId: number;
+  committed: boolean;
+};
 
 export type DragDirection = "up" | "down" | "left" | "right";
 
-export type Target = Point & {
+export type Target = Partial<Point> & {
   page: number;
   location: ItemLocation;
 };
@@ -39,6 +55,7 @@ export type LayoutSnapshot = {
   main: MainLayout;
   group: GroupLayout;
   dock: DockLayoutSnapshot;
+  iconSize: number;
 };
 
 export type PositionSnapshot = {
@@ -58,15 +75,18 @@ export type DragSnapshot = {
   layout: LayoutSnapshot;
   position: PositionSnapshot;
   occupied: OccupedSnapshot;
-  iconSize: number;
 };
 
 export type DragCurrent = {
   clientPoint: ClientPoint;
-  target?: Target;
-  intervalId?: number;
+  target: Target;
   dockBound: DockBound;
   direction?: DragDirection;
+  colliedItems: ColliedItem[];
+  snap?: Snap;
+};
+
+export type DragPreview = {
   groupWith?: string;
   transformMap?: TransformMap;
 };

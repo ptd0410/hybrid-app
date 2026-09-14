@@ -1,6 +1,7 @@
 import {
   useDragStore,
   type DragCurrent,
+  type DragPreview,
   type DragSnapshot,
   type DragStore,
 } from "@/modules/drag";
@@ -13,11 +14,19 @@ export function usePickDragStore<K extends keyof DragStore>(
   return useStoreKeys(useDragStore, keys);
 }
 
-export function usePickDragCurreht<K extends keyof DragCurrent>(
+export function usePickDragCurrent<K extends keyof DragCurrent>(
   ...keys: K[]
 ): Pick<DragCurrent, K> {
   return useStoreKeys(useDragStore, keys, {
     selector: (s) => s.current as DragCurrent,
+  });
+}
+
+export function usePickDragPreview<K extends keyof DragPreview>(
+  ...keys: K[]
+): Pick<DragPreview, K> {
+  return useStoreKeys(useDragStore, keys, {
+    selector: (s) => s.preview as DragPreview,
   });
 }
 
@@ -32,7 +41,7 @@ export function usePickDragSnapshot<K extends keyof DragSnapshot>(
 export function useDragStatus(itemId: string) {
   return useDragStore(
     useShallow((s) => ({
-      isGroupWith: s.current?.groupWith === itemId,
+      isGroupWith: s.preview?.groupWith === itemId,
     })),
   );
 }

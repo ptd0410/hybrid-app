@@ -1,4 +1,5 @@
 import {
+  useItems,
   useMainStyle,
   usePickGridStore,
   usePickLayoutStore,
@@ -15,12 +16,13 @@ export function Body({}: BodyProps) {
   const { mainIds } = usePickGridStore("mainIds");
   const { main, dock } = usePickLayoutStore("main", "dock");
   const style = useMainStyle(main, dock);
+  const items = useItems(mainIds);
 
   const { grid } = main;
 
   return (
     <SwiperWrapper page={page} onPageChange={setPage}>
-      {mainIds.map((items, i) => (
+      {items.map((items, i) => (
         <SwiperSlide
           key={i}
           virtualIndex={i}
@@ -35,8 +37,8 @@ export function Body({}: BodyProps) {
                   gridTemplateRows: `repeat(${grid.row}, minmax(0, 1fr))`,
                 }}
               >
-                {items.map((id) => (
-                  <MainItem key={id} itemId={id} />
+                {items.map((item) => (
+                  <MainItem key={item.id} item={item} />
                 ))}
               </div>
             </MainContextMenu>

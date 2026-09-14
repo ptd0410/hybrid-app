@@ -3,37 +3,6 @@ import type { ItemLocation } from "@/modules/item";
 import type { DockLayout } from "@/modules/layout";
 import type { Bound, ClientPoint, Position } from "@/types";
 
-export function computeOffsetPosition(
-  point: ClientPoint,
-  bound: Bound,
-): Position {
-  return {
-    left: point.clientX - bound.left,
-    top: point.clientY - bound.top,
-  };
-}
-
-export function updateElementPosition(
-  element: HTMLElement,
-  x: number,
-  y: number,
-) {
-  Object.assign(element.style, {
-    left: "0px",
-    top: "0px",
-    transform: `translate(${x}px, ${y}px)`,
-  });
-}
-
-export function getPoint(
-  event: React.PointerEvent | PointerEvent,
-): ClientPoint {
-  return {
-    clientX: event.clientX,
-    clientY: event.clientY,
-  };
-}
-
 export function computeDockLayoutSnapshot(
   dock: DockLayout,
   dockIds: string[],
@@ -64,5 +33,15 @@ export function computeDockLayoutSnapshot(
       isDock ? left + cell : left,
     ),
     iconSize,
+  };
+}
+
+export function computeOffsetSnapshot(
+  point: ClientPoint,
+  bound: Bound,
+): Position {
+  return {
+    left: point.clientX - bound.left,
+    top: point.clientY - bound.top,
   };
 }

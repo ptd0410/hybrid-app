@@ -1,4 +1,3 @@
-import { useItem } from "@/hooks";
 import { AppContextMenu } from "../context-menu";
 import {
   CellWrapper,
@@ -8,20 +7,15 @@ import {
   MainIcon,
 } from "../item.ui";
 import { Dragable } from "../../drag";
+import type { WithItem } from "@/types";
 
-export type AppProps = {
-  itemId: string;
-};
-
-export function App({ itemId }: AppProps) {
-  const item = useItem(itemId);
-
+export function App({ item }: WithItem) {
   return (
     <CellWrapper>
-      <AppContextMenu itemId={itemId}>
-        <Dragable itemId={itemId}>
+      <AppContextMenu item={item}>
+        <Dragable item={item}>
           <MainIcon className="relative">
-            <GroupPreview itemId={itemId} />
+            <GroupPreview item={item} />
             <ItemImage src={item.icon} />
           </MainIcon>
         </Dragable>

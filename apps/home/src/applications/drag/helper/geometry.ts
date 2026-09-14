@@ -8,6 +8,8 @@ import type {
 import type { ItemLocation } from "@/modules/item";
 import type { Bound, ClientPoint, Point } from "@/types";
 
+const ICON_EDGE_RATIO = 0.15;
+
 export type DetectLocationOptions = {
   prev?: Target;
   isGroupOpen?: boolean;
@@ -96,6 +98,71 @@ export function computePoint(
       };
     }
   }
+}
+
+export function isSameCell(a?: Target, b?: Target) {
+  return (
+    !!a &&
+    !!b &&
+    a.x === b.x &&
+    a.y === b.y &&
+    a.page === b.page &&
+    a.location === b.location
+  );
+}
+
+export function getMainIconBound(item: Point, layout: LayoutSnapshot): Bound {
+  const { iconSize, main } = layout;
+  const { cell, paddingX, statusbarHeight } = main;
+  const insetX = (cell.width - iconSize) / 2;
+  const insetY = (cell.height - iconSize - 12 - 14) / 2;
+  const left = item.x * cell.width + paddingX + insetX;
+  const top = item.y * cell.height + statusbarHeight + insetY;
+  return {
+    left,
+    top,
+    right: left + iconSize,
+    bottom: top + iconSize,
+  };
+}
+
+function isPointerInBound(clientPoint: ClientPoint, bound: Bound) {
+  return (
+    clientPoint.clientX >= bound.left &&
+    clientPoint.clientX <= bound.right &&
+    clientPoint.clientY >= bound.top &&
+    clientPoint.clientY <= bound.bottom
+  );
+}
+
+function getIconInnerBound(icon: Bound): Bound {
+  const insetX = (icon.right - icon.left) * ICON_EDGE_RATIO;
+  const insetY = (icon.bottom - icon.top) * ICON_EDGE_RATIO;
+  return {
+    left: icon.left + insetX,
+    top: icon.top + insetY,
+    right: icon.right - insetX,
+    bottom: icon.bottom - insetY,
+  };
+}
+
+export function isPointerInIconEdge(
+  clientPoint: ClientPoint,
+  item: Point,
+  layout: LayoutSnapshot,
+) {
+  const icon = getMainIconBound(item, layout);
+  if (!isPointerInBound(clientPoint, icon)) return false;
+  return !isPointerInBound(clientPoint, getIconInnerBound(icon));
+}
+
+export function getDockGridSize(layout: LayoutSnapshot) {
+  const { iconSize, gap, paddingX, boundIn } = layout.dock;
+  const cell = iconSize + gap;
+  const slots = Math.round(
+    (boundIn.right - boundIn.left - paddingX * 2 + gap) / cell,
+  );
+  return { col: Math.max(1, slots), row: 1 };
 }
 
 export function computeDirection(

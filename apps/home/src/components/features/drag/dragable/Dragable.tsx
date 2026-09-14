@@ -3,12 +3,13 @@ import { Slot } from "@radix-ui/react-slot";
 import type { ComponentProps, PointerEvent, PropsWithChildren } from "react";
 import { useClickHold } from "./useClickHold";
 import { drag } from "@/applications";
+import type { WithItem } from "@/types";
 
 export type DragableProps = PropsWithChildren &
+  WithItem &
   Omit<ComponentProps<typeof Slot>, "onClick"> & {
     onDragStart?: () => void;
     onClick?: (event: PointerEvent) => void;
-    itemId: string;
   };
 
 export function Dragable({
@@ -19,12 +20,12 @@ export function Dragable({
   onPointerMove,
   onPointerUp,
   onPointerCancel,
-  itemId,
+  item,
   ...props
 }: DragableProps) {
   const behavior = useClickHold({
     onHold: (e, currentTarget) => {
-      drag.start(e, children, currentTarget, itemId);
+      drag.start(e, children, currentTarget, item.id);
     },
     onClick,
   });
@@ -34,7 +35,6 @@ export function Dragable({
       {...props}
       className={cn("swiper-no-swiping touch-none", className)}
       onPointerDown={(event) => {
-        console.log("thandhuy down");
         onPointerDown?.(event);
         behavior.onPointerDown(event);
       }}

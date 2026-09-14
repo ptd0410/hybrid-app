@@ -2,17 +2,19 @@ import { getDragStore, type DragSnapshot } from "@/modules/drag";
 import type { ReactNode } from "react";
 import { dragMove } from "./move";
 import { dragEnd } from "./end";
+import { getGroupStore } from "@/modules/group";
 import { getItemStore } from "@/modules/item";
 import { getLayoutStore } from "@/modules/layout";
-import {
-  computeDockLayoutSnapshot,
-  computeOffsetPosition,
-} from "./drag.shared";
 import { getGridStore } from "@/modules/grid";
 import { pick } from "@/lib";
 import { computeOccupiedMap } from "@/lib/occupied.lib";
-import { getGroupStore } from "@/modules/group";
-import { getRelationStore } from "@/modules/relation";
+import {
+  computeDockLayoutSnapshot,
+  computeOffsetSnapshot,
+  removeItemId,
+  resetDragDwell,
+  updateElementPosition,
+} from "./helper";
 
 export function dragStart(
   event: React.PointerEvent,
@@ -20,18 +22,17 @@ export function dragStart(
   originEle: HTMLElement,
   itemId: string,
 ) {
-  const { snapshot, start } = getDragStore();
+  const { snapshot, start, ele } = getDragStore();
   const { items } = getItemStore();
   const { main, dock, group, iconSize } = getLayoutStore();
-  const { dockIds, mainIds } = getGridStore();
+  const { dockIds, mainIds, childrenIdsMap } = getGridStore();
   const { snapshot: groupSnapshot } = getGroupStore();
-  const { children } = getRelationStore();
 
   const item = items[itemId];
 
   if ("button" in event && event.button !== 0) return;
   if (!main || !dock || !group) return;
-  if (snapshot || !item) return;
+  if (snapshot || !item || !ele) return;
 
   window.addEventListener("pointermove", dragMove, { capture: true });
   window.addEventListener("pointerup", dragEnd, { capture: true });
@@ -41,15 +42,15 @@ export function dragStart(
 
   const bound = originEle.getBoundingClientRect();
   const dockSnapshot = computeDockLayoutSnapshot(dock, dockIds, item.location);
-  const layout = { main, group, dock: dockSnapshot };
-  const childIds = children[groupId] ?? [];
+  const layout = { main, group, dock: dockSnapshot, iconSize };
+  const childIds = (childrenIdsMap[groupId] ?? []).flat();
 
   const _snapshot: DragSnapshot = {
     item,
     node,
     layout,
     position: {
-      offset: computeOffsetPosition(event, bound),
+      offset: computeOffsetSnapshot(event, bound),
       origin: pick(bound, ["left", "top"]),
     },
     occupied: {
@@ -57,8 +58,10 @@ export function dragStart(
       dock: computeOccupiedMap(dockIds, items, itemId),
       group: computeOccupiedMap(childIds, items, itemId),
     },
-    iconSize,
   };
+
+  resetDragDwell();
   updateElementPosition(ele, bound.left, bound.top);
+  removeItemId(item);
   start(_snapshot);
 }

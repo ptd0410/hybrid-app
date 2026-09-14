@@ -1,30 +1,21 @@
-import {
-  useDragStatus,
-  useItem,
-  usePickGroupStore,
-  usePreviewChildren,
-} from "@/hooks";
+import { useDragStatus, usePickGroupStore, usePreviewChildren } from "@/hooks";
 import { cn } from "@/lib";
 import { CellWrapper, ItemName, MainIcon } from "../item.ui";
 import { Dragable } from "../../drag/dragable/Dragable";
 import { GroupContextMenu } from "../context-menu";
+import type { WithItem } from "@/types";
 
-export type GroupProps = {
-  itemId: string;
-};
-
-export function Group({ itemId }: GroupProps) {
-  const item = useItem(itemId);
+export function Group({ item }: WithItem) {
   const { snapshot } = usePickGroupStore("snapshot");
-  const children = usePreviewChildren(itemId);
-  const { isGroupWith } = useDragStatus(itemId);
-  const isExpanded = snapshot?.groupId === itemId;
+  const children = usePreviewChildren(item.id);
+  const { isGroupWith } = useDragStatus(item.id);
+  const isExpanded = snapshot?.groupId === item.id;
 
   return (
     <CellWrapper>
-      <GroupContextMenu itemId={itemId}>
+      <GroupContextMenu item={item}>
         <Dragable
-          itemId={itemId}
+          item={item}
           // onClick={(e) => openGroup(itemId, e.currentTarget as HTMLElement)}
         >
           <MainIcon

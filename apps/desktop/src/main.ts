@@ -7,10 +7,19 @@ import { appManager, resolve } from "./modules/app";
 import path from "path";
 import { fsApi } from "./modules/fs";
 
+const modules: any = {
+  fs: fsApi,
+};
+
 ipcMain.handle(
   "app:request",
   async (_event, action: string, data: any = {}) => {
     console.log("thanhduy request", { action, data });
+    const [module, method] = action.split(":");
+
+    const fn = modules[module][method];
+    if (fn) return fn(data);
+
     switch (action) {
       case "openApp": {
         await launchApp(data.id);
@@ -27,9 +36,6 @@ ipcMain.handle(
 
       case "getAppMetadata":
         return metadata;
-
-      case "volumes":
-        return fsApi.getVolumes();
 
       default:
         throw new Error(`Invalid action: ${action}`);

@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { FsVolume } from "../fs.types";
+import { FsVolume } from "types";
 
 export async function getWindowsVolumes(): Promise<FsVolume[]> {
   const volumes: FsVolume[] = [];

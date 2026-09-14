@@ -13,6 +13,7 @@
     "rebuild:db": "electron-rebuild -f -w better-sqlite3"
   },
   "devDependencies": {
+    "types": "workspace:*",
     "@electron/rebuild": "^4.2.0",
     "@types/adm-zip": "^0.5.8",
     "@types/better-sqlite3": "^9.6.0",

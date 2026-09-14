@@ -69,12 +69,18 @@ importers:
       tsx:
         specifier: latest
         version: 4.23.13
+      types:
+        specifier: workspace:*
+        version: link:../../packages/types
       typescript:
         specifier: latest
         version: 7.0.2
 
   apps/file-manager:
     dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.102.8
+        version: 5.102.8(react@19.2.8)
       bridge:
         specifier: workspace:*
         version: link:../../packages/bridge
@@ -109,6 +115,9 @@ importers:
       globals:
         specifier: ^17.11.0
         version: 17.12.0
+      types:
+        specifier: workspace:*
+        version: link:../../packages/types
       typescript:
         specifier: ~6.0.2
         version: 6.0.3
@@ -200,55 +209,6 @@ importers:
       types:
         specifier: workspace:*
         version: link:../../packages/types
-      typescript:
-        specifier: ~6.0.2
-        version: 6.0.3
-      typescript-eslint:
-        specifier: ^8.67.0
-        version: 8.69.0(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
-      vite:
-        specifier: ^8.2.2
-        version: 8.2.2(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13)
-
-  apps/web:
-    dependencies:
-      bridge:
-        specifier: workspace:*
-        version: link:../../packages/bridge
-      react:
-        specifier: ^19.2.8
-        version: 19.2.8
-      react-dom:
-        specifier: ^19.2.8
-        version: 19.2.8(react@19.2.8)
-    devDependencies:
-      '@eslint/js':
-        specifier: ^10.0.1
-        version: 10.0.1(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))
-      '@types/node':
-        specifier: ^24.13.3
-        version: 24.13.3
-      '@types/react':
-        specifier: ^19.2.18
-        version: 19.2.18
-      '@types/react-dom':
-        specifier: ^19.2.4
-        version: 19.2.7(@types/react@19.2.18)
-      '@vitejs/plugin-react':
-        specifier: ^6.1.0
-        version: 6.1.1(vite@8.2.2(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.13))
-      eslint:
-        specifier: ^10.9.0
-        version: 10.10.0(jiti@2.7.0)(supports-color@10.2.2)
-      eslint-plugin-react-hooks:
-        specifier: ^7.1.1
-        version: 7.1.1(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
-      eslint-plugin-react-refresh:
-        specifier: ^0.5.4
-        version: 0.5.6(eslint@10.10.0(jiti@2.7.0)(supports-color@10.2.2))
-      globals:
-        specifier: ^17.11.0
-        version: 17.12.0
       typescript:
         specifier: ~6.0.2
         version: 6.0.3

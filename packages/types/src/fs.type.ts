@@ -10,3 +10,9 @@ export interface FsVolume {
   name: string;
   path: string;
 }
+
+export type FsApi = {
+  readDir: (dirPath: string) => Promise<FsEntry[]>;
+  volumes: () => Promise<FsVolume[]>;
+  favorites: () => Promise<FsEntry[]>;
+};

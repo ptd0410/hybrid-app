@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { createRequire } from "node:module";
-import { getAppsDir } from "./app.helper";
+import { getAppsDir } from "../../app.helper";
 
 const require = createRequire(import.meta.url);
 const AdmZip = require("adm-zip");

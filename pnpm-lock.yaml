@@ -75,6 +75,9 @@ importers:
 
   apps/file-manager:
     dependencies:
+      bridge:
+        specifier: workspace:*
+        version: link:../../packages/bridge
       react:
         specifier: ^19.2.8
         version: 19.2.8

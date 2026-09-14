@@ -3,8 +3,9 @@ import { windowApi } from "./modules/window";
 import { metadata } from "./configs";
 import { migrateDatabase } from "./database/mrigrate";
 import { launchApp } from "./applications";
-import { resolve } from "./modules/app";
+import { appManager, resolve } from "./modules/app";
 import path from "path";
+import { fsApi } from "./modules/fs";
 
 ipcMain.handle(
   "app:request",
@@ -16,8 +17,19 @@ ipcMain.handle(
         return true;
       }
 
+      case "getAppList": {
+        return appManager.getApps();
+      }
+
+      case "getApp": {
+        return appManager.getApp(data.id);
+      }
+
       case "getAppMetadata":
         return metadata;
+
+      case "volumes":
+        return fsApi.getVolumes();
 
       default:
         throw new Error(`Invalid action: ${action}`);

@@ -12,6 +12,7 @@
     "deploy": "npm run package && wrangler r2 object put my-builds/file-manager.zip --file ./file-manager.zip --remote"
   },
   "dependencies": {
+    "bridge": "workspace:*",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { getAppsDir } from "./app.helper";
+import { getAppsDir } from "../../app.helper";
 
 const downloadDir = getAppsDir("downloads");
 

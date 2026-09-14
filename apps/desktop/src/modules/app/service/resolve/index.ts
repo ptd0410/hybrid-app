@@ -3,8 +3,8 @@ import path from "node:path";
 
 import { download } from "./download";
 import { install, remove } from "./install";
-import { appsRepository } from "./app.repository";
-import { appApi } from "./app.api";
+import { appsRepository } from "../../app.repository";
+import { appApi } from "../../app.api";
 
 function compareVersions(a: string, b: string): number {
   const left = a.split(".").map(Number);

@@ -5,7 +5,7 @@ import { migrateDatabase } from "./database/mrigrate";
 import { launchApp } from "./applications";
 import { appManager, resolve } from "./modules/app";
 import path from "path";
-import { fsApi } from "./modules/fs";
+import { fsApi, requestProtectedFolderAccess } from "./modules/fs";
 
 const modules: any = {
   fs: fsApi,
@@ -14,11 +14,12 @@ const modules: any = {
 ipcMain.handle(
   "app:request",
   async (_event, action: string, data: any = {}) => {
-    console.log("thanhduy request", { action, data });
     const [module, method] = action.split(":");
-
-    const fn = modules[module][method];
-    if (fn) return fn(data);
+    console.log("thanhduy action", action);
+    const fn = modules[module]?.[method];
+    if (typeof fn === "function") {
+      return fn(...(Array.isArray(data) ? data : []));
+    }
 
     switch (action) {
       case "openApp": {
@@ -43,7 +44,7 @@ ipcMain.handle(
   },
 );
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   protocol.handle("app", async (request) => {
     const url = new URL(request.url);
 
@@ -56,6 +57,8 @@ app.whenReady().then(() => {
 
     return net.fetch(`file://${filePath}`);
   });
+
+  await requestProtectedFolderAccess();
 
   migrateDatabase();
 

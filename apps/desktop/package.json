@@ -4,7 +4,7 @@
   "type": "module",
   "main": "dist/main.js",
   "scripts": {
-    "dev": "pnpm build && electron .",
+    "dev": "node scripts/patch-electron-plist.mjs && pnpm build && electron .",
     "build": "pnpm build:main && pnpm build:preload",
     "build:main": "esbuild src/main.ts --bundle --platform=node --format=esm --external:electron --external:better-sqlite3 --outfile=dist/main.js",
     "build:preload": "esbuild src/preload.ts --bundle --platform=browser --format=cjs --external:electron --outfile=dist/preload.cjs",

@@ -21,18 +21,14 @@ export class Bridge {
     return this.instance.request(action, data);
   }
 
-  createApi<T extends Record<string, (...args: any[]) => any>>(
-    module: string,
-  ): T {
+  createApi<T extends object>(module: string): T {
     return new Proxy({} as T, {
       get: (_target, method: string | symbol) => {
         if (typeof method !== "string") return undefined;
 
         return (...args: unknown[]) => {
           const action = `${module}:${method}`;
-          return args.length === 0
-            ? this.request(action)
-            : this.request(action, args[0]);
+          return this.request(action, args);
         };
       },
     });

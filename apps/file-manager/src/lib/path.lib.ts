@@ -51,6 +51,33 @@ export function parentPath(filePath: string) {
   return parts.join("\\");
 }
 
+export function normalizePath(filePath: string) {
+  if (!filePath) return "";
+  if (filePath === "/" || /^[A-Za-z]:\\?$/.test(filePath)) return filePath;
+  return filePath.replace(/[/\\]+$/, "");
+}
+
+export function samePath(a: string, b: string) {
+  return normalizePath(a) === normalizePath(b);
+}
+
+export function isPathInside(parent: string, child: string) {
+  const root = normalizePath(parent);
+  const target = normalizePath(child);
+  if (!root || !target || samePath(root, target)) return false;
+  const sep = root.includes("\\") ? "\\" : "/";
+  const prefix = root.endsWith(sep) ? root : `${root}${sep}`;
+  return target.startsWith(prefix);
+}
+
+export function canMoveInto(src: string, destDir: string) {
+  if (!src || !destDir) return false;
+  if (samePath(src, destDir)) return false;
+  if (isPathInside(src, destDir)) return false;
+  const parent = parentPath(src);
+  return !parent || !samePath(parent, destDir);
+}
+
 export function pathSegments(filePath: string) {
   if (!filePath) return [];
 

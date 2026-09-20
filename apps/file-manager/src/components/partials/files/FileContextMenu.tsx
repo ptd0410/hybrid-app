@@ -7,8 +7,14 @@ import {
   ContextMenuShortcut,
   ContextMenuTrigger,
 } from "@/components/ui";
-import { fileActions, useFileActions } from "@/hooks";
-import { parentPath } from "@/lib";
+import {
+  fileActions,
+  fileDropOverClass,
+  useFileActions,
+  useFileDrag,
+  useFolderDrop,
+} from "@/hooks";
+import { cn, parentPath } from "@/lib";
 import { useActiveStore } from "@/modules/active";
 import {
   forwardRef,
@@ -26,12 +32,23 @@ export const FileContextMenu = forwardRef<
   HTMLButtonElement,
   FileContextMenuProps
 >(function FileContextMenu(
-  { entry, children, onContextMenu, onClick, onDoubleClick, ...props },
+  {
+    entry,
+    children,
+    className,
+    onContextMenu,
+    onClick,
+    onDoubleClick,
+    ...props
+  },
   ref,
 ) {
   const { open, clipboard } = useFileActions();
   const selected = useActiveStore((s) => s.selected);
   const setSelected = useActiveStore((s) => s.setSelected);
+  const { isDragging, dragProps } = useFileDrag(entry);
+  const isFolder = isFsContainer(entry.type);
+  const { isOver, dropProps } = useFolderDrop(isFolder ? entry.path : undefined);
   const multi = selected.includes(entry.path) && selected.length > 1;
   const canPaste = Boolean(clipboard?.paths.length);
   const destDir = parentPath(entry.path);
@@ -57,6 +74,13 @@ export const FileContextMenu = forwardRef<
           <button
             type="button"
             {...props}
+            {...dragProps}
+            {...(isFolder ? dropProps : {})}
+            className={cn(
+              className,
+              isDragging && "opacity-50",
+              isOver && fileDropOverClass,
+            )}
             onClick={onClick}
             onDoubleClick={onDoubleClick}
             onContextMenu={handleContextMenu}

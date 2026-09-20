@@ -1,17 +1,17 @@
 import { useClickRoot, useFavorites } from "@/hooks";
 import { useActiveStore } from "@/modules/active";
+import { useFsStore } from "@/modules/fs";
 import { SidebarSection, type ISidebarItem } from "./sidebar.ui";
 
 export type FavoritesProps = {};
 
 export function Favorites({}: FavoritesProps) {
   const { data } = useFavorites();
+  const extras = useFsStore((s) => s.extraFavorites);
   const root = useActiveStore((s) => s.root);
   const clickRoot = useClickRoot();
 
-  if (!data?.length) return null;
-
-  const items: ISidebarItem[] = data.map((item) => ({
+  const items: ISidebarItem[] = (data ?? []).map((item) => ({
     label: item.name,
     id: item.path,
     icon: "Folder",
@@ -22,6 +22,8 @@ export function Favorites({}: FavoritesProps) {
       label="Favorites"
       items={items}
       activeId={root}
+      pinFavorites
+      extraIds={extras.map((item) => item.path)}
       onSelect={(item) => clickRoot(item.id)}
     />
   );

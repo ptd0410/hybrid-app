@@ -2,8 +2,7 @@ import { isFsContainer } from "@/api/fs";
 import { Desc, Text } from "@/components/ui";
 import { fileActions } from "@/hooks";
 import { basename } from "@/lib";
-import { useFileStore } from "@/modules/file";
-import { fsQuery } from "@/modules/fs";
+import { fsQuery, useFsStore } from "@/modules/fs";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
 import { kindLabel } from "./file.const";
@@ -18,13 +17,13 @@ export function FileDialogs() {
 }
 
 function FileInfoDialog() {
-  const path = useFileStore((s) => s.infoPath);
+  const path = useFsStore((s) => s.infoPath);
   const { data, isLoading, error } = useQuery(fsQuery.stat(path ?? ""));
 
   if (!path) return null;
 
   return (
-    <Overlay onClose={() => useFileStore.getState().setInfoPath(null)}>
+    <Overlay onClose={() => useFsStore.getState().setInfoPath(null)}>
       <Text className="mb-3 font-medium">Get Info</Text>
       {isLoading && <Desc className="text-white/55">Loading...</Desc>}
       {error && <Desc className="text-white/55">{error.message}</Desc>}
@@ -46,7 +45,7 @@ function FileInfoDialog() {
 }
 
 function FileRenameDialog() {
-  const path = useFileStore((s) => s.renamePath);
+  const path = useFsStore((s) => s.renamePath);
   const [name, setName] = useState("");
 
   useEffect(() => {
@@ -56,7 +55,7 @@ function FileRenameDialog() {
   if (!path) return null;
 
   return (
-    <Overlay onClose={() => useFileStore.getState().setRenamePath(null)}>
+    <Overlay onClose={() => useFsStore.getState().setRenamePath(null)}>
       <Text className="mb-3 font-medium">Rename</Text>
       <form
         onSubmit={(event) => {
@@ -74,7 +73,7 @@ function FileRenameDialog() {
           <button
             type="button"
             className="rounded-md px-2.5 py-1 text-sm text-white/70 hover:bg-white/10"
-            onClick={() => useFileStore.getState().setRenamePath(null)}
+            onClick={() => useFsStore.getState().setRenamePath(null)}
           >
             Cancel
           </button>

@@ -1,5 +1,5 @@
-import { pathSegments } from "@/lib";
-import { useClickRoot } from "@/hooks";
+import { fileDropOverClass, useClickRoot, useFolderDrop } from "@/hooks";
+import { cn, pathSegments } from "@/lib";
 import { useActiveStore } from "@/modules/active";
 import { Tag, Text } from "../ui";
 
@@ -19,15 +19,39 @@ export function PathBar({}: PathBarProps) {
           {index > 0 && (
             <Tag name="ChevronRight" size={12} className="text-white/35" />
           )}
-          <button
-            type="button"
-            className="hover:bg-white/10 rounded px-1 py-0.5"
-            onClick={() => goTo(segment.path)}
-          >
-            <Text className="text-xs text-white/70">{segment.name}</Text>
-          </button>
+          <PathSegment
+            name={segment.name}
+            path={segment.path}
+            onOpen={() => goTo(segment.path)}
+          />
         </div>
       ))}
     </div>
+  );
+}
+
+function PathSegment({
+  name,
+  path,
+  onOpen,
+}: {
+  name: string;
+  path: string;
+  onOpen: () => void;
+}) {
+  const { isOver, dropProps } = useFolderDrop(path);
+
+  return (
+    <button
+      type="button"
+      className={cn(
+        "hover:bg-white/10 rounded px-1 py-0.5",
+        isOver && fileDropOverClass,
+      )}
+      onClick={onOpen}
+      {...dropProps}
+    >
+      <Text className="text-xs text-white/70">{name}</Text>
+    </button>
   );
 }

@@ -2,13 +2,14 @@ import { fsApi, isFsContainer, type FileEntry } from "@/api/fs";
 import { queryClient } from "@/clients";
 import {
   basename,
+  canMoveInto,
   duplicateName,
   joinPath,
   parentPath,
   uniqueName,
 } from "@/lib";
 import { useActiveStore } from "@/modules/active";
-import { useFileStore } from "@/modules/file";
+import { fsQueryKey, useFsStore } from "@/modules/fs";
 import { useCallback, useEffect } from "react";
 import { useClickRoot } from "./a.hook";
 
@@ -40,7 +41,7 @@ export const fileActions = {
   getInfo(entry?: FileEntry) {
     const path =
       entry?.path ?? selectedPaths().at(-1) ?? useActiveStore.getState().root;
-    if (path) useFileStore.getState().setInfoPath(path);
+    if (path) useFsStore.getState().setInfoPath(path);
   },
   newFolder(dir?: string) {
     const target = dir ?? useActiveStore.getState().root;
@@ -51,21 +52,21 @@ export const fileActions = {
       const dest = joinPath(target, destName);
       await fsApi.createDir(dest);
       useActiveStore.getState().setSelected([dest]);
-      useFileStore.getState().setRenamePath(dest);
+      useFsStore.getState().setRenamePath(dest);
     });
   },
   startRename(entry: FileEntry) {
-    useFileStore.getState().setRenamePath(entry.path);
+    useFsStore.getState().setRenamePath(entry.path);
   },
   copy(entry?: FileEntry) {
     const paths = selectedPaths(entry);
     if (!paths.length) return;
-    useFileStore.getState().setClipboard({ mode: "copy", paths });
+    useFsStore.getState().setClipboard({ mode: "copy", paths });
   },
   cut(entry?: FileEntry) {
     const paths = selectedPaths(entry);
     if (!paths.length) return;
-    useFileStore.getState().setClipboard({ mode: "cut", paths });
+    useFsStore.getState().setClipboard({ mode: "cut", paths });
   },
   async copyPath(entry?: FileEntry) {
     const paths = selectedPaths(entry);
@@ -86,8 +87,40 @@ export const fileActions = {
       }
     });
   },
+  moveInto(src: string, destDir: string) {
+    if (!canMoveInto(src, destDir)) return;
+    void run(async () => {
+      const names = await existingNames(destDir);
+      const destName = uniqueName(names, basename(src));
+      const dest = joinPath(destDir, destName);
+      await fsApi.move(src, dest);
+      const selected = useActiveStore.getState().selected;
+      useActiveStore
+        .getState()
+        .setSelected(selected.map((path) => (path === src ? dest : path)));
+    });
+  },
+  addFavorite(entry: FileEntry) {
+    if (!isFsContainer(entry.type)) return;
+    const extras = useFsStore.getState().extraFavorites;
+    const defaults =
+      queryClient.getQueryData<FileEntry[]>(fsQueryKey.favorites()) ?? [];
+    if (
+      [...defaults, ...extras].some((item) => item.path === entry.path)
+    ) {
+      return;
+    }
+    useFsStore.getState().addFavorite({
+      name: entry.name,
+      path: entry.path,
+      type: entry.type,
+    });
+  },
+  removeFavorite(path: string) {
+    useFsStore.getState().removeFavorite(path);
+  },
   paste(destDir?: string) {
-    const clip = useFileStore.getState().clipboard;
+    const clip = useFsStore.getState().clipboard;
     if (!clip?.paths.length) return;
     const target = destDir ?? useActiveStore.getState().root;
     if (!target) return;
@@ -100,7 +133,7 @@ export const fileActions = {
         if (clip.mode === "cut") await fsApi.move(src, dest);
         else await fsApi.copy(src, dest);
       }
-      if (clip.mode === "cut") useFileStore.getState().setClipboard(null);
+      if (clip.mode === "cut") useFsStore.getState().setClipboard(null);
     });
   },
   remove(entry?: FileEntry) {
@@ -122,7 +155,7 @@ export const fileActions = {
   async submitRename(path: string, nextName: string) {
     const name = nextName.trim();
     if (!name || name === basename(path)) {
-      useFileStore.getState().setRenamePath(null);
+      useFsStore.getState().setRenamePath(null);
       return;
     }
     if (/[/\\]/.test(name)) {
@@ -137,13 +170,13 @@ export const fileActions = {
       useActiveStore
         .getState()
         .setSelected(selected.map((item) => (item === path ? nextPath : item)));
-      useFileStore.getState().setRenamePath(null);
+      useFsStore.getState().setRenamePath(null);
     });
   },
 };
 
 export function useFileActions() {
-  const clipboard = useFileStore((s) => s.clipboard);
+  const clipboard = useFsStore((s) => s.clipboard);
   const goTo = useClickRoot();
   const open = useCallback(
     (entry: FileEntry) => {
@@ -201,7 +234,7 @@ export function useFileActionHotkeys() {
       }
       if (event.key === "F2" && current) {
         event.preventDefault();
-        useFileStore.getState().setRenamePath(current);
+        useFsStore.getState().setRenamePath(current);
         return;
       }
       if (meta && (event.key === "Backspace" || event.key === "Delete")) {

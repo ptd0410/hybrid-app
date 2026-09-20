@@ -1,6 +1,6 @@
 import { sortEntries } from "@/lib";
 import { useActiveStore } from "@/modules/active";
-import { fsQuery } from "@/modules/fs";
+import { fsQuery, useFsStore } from "@/modules/fs";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo } from "react";
 import { useNavigation } from "./a.hook";
@@ -10,7 +10,14 @@ export function useVolumnes() {
 }
 
 export function useFavorites() {
-  return useQuery(fsQuery.favorites());
+  const query = useQuery(fsQuery.favorites());
+  const extras = useFsStore((s) => s.extraFavorites);
+  const data = useMemo(() => {
+    const base = query.data ?? [];
+    const seen = new Set(base.map((item) => item.path));
+    return [...base, ...extras.filter((item) => !seen.has(item.path))];
+  }, [extras, query.data]);
+  return { ...query, data };
 }
 
 export function useDirChildren(dirPath: string, pageSize?: number) {

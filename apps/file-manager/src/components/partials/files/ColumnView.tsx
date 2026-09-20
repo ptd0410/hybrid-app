@@ -1,6 +1,11 @@
 import { isFsContainer, type FileEntry } from "@/api/fs";
 import { Desc, Tag, Text } from "@/components/ui";
-import { useDirItems, useFileVirtualizer } from "@/hooks";
+import {
+  fileDropOverClass,
+  useDirItems,
+  useFileVirtualizer,
+  useFolderDrop,
+} from "@/hooks";
 import { cn, moveIndex, nextSelection } from "@/lib";
 import { useActiveStore } from "@/modules/active";
 import {
@@ -188,6 +193,7 @@ function ColumnPane({
     isFetchingNextPage,
     fetchNextPage,
   } = useDirItems(path);
+  const { isOver, dropProps } = useFolderDrop(path);
   const listRef = useRef<HTMLDivElement>(null);
 
   onItems(items);
@@ -210,8 +216,12 @@ function ColumnPane({
   return (
     <div
       ref={listRef}
-      className="w-52 shrink-0 min-h-0 overflow-y-auto border-r border-white/10"
+      className={cn(
+        "w-52 shrink-0 min-h-0 overflow-y-auto border-r border-white/10",
+        isOver && fileDropOverClass,
+      )}
       onClick={onClear}
+      {...dropProps}
     >
       <FileStatus
         isLoading={isLoading}
